@@ -1,55 +1,78 @@
+// Tableau pour stocker les films
 const movies = [];
+const APIkey = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5YWYyYzdmOGFhNTE1MmE2MzUzZGQ4NmU3YWQxOTUyZiIsIm5iZiI6MTczOTY1Mzk2My42MzEsInN1YiI6IjY3YjEwMzRiYmExNDcxMmY3NzM2MzVlYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dVdxqA5PntSr-vVj9piexqli8451flDG54ouvI1-7vc";
 
+// Fonction asynchrone pour récupérer une liste de films
 async function fetchMovies() {
     try {
+        // Effectuer une requête pour récupérer les films populaires
         const response = await fetch('https://api.themoviedb.org/3/discover/movie', {
             headers: {
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5YWYyYzdmOGFhNTE1MmE2MzUzZGQ4NmU3YWQxOTUyZiIsIm5iZiI6MTczOTY1Mzk2My42MzEsInN1YiI6IjY3YjEwMzRiYmExNDcxMmY3NzM2MzVlYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dVdxqA5PntSr-vVj9piexqli8451flDG54ouvI1-7vc'
+                'Authorization': `Bearer ${APIkey}`
             }
         });
-        if (!response.ok) throw new Error('Failed to fetch movies.');
+
+        // Vérifier si la requête a réussi
+        if (!response.ok) throw new Error('Échec de la récupération des films.');
+
+        // Convertir la réponse en JSON
         const data = await response.json();
 
+        // Pour chaque film récupéré, obtenir plus de détails
         for (const movie of data.results) {
             await fetchMovieDetails(movie.id);
         }
+
+        // Retourner la liste des films
         return movies;
     } catch (error) {
-        console.error("Error fetching data: ", error);
-        alert('Failed to fetch movies.');
+        console.error("Erreur lors de la récupération des films :", error);
+        alert('Échec de la récupération des films.');
         return [];
     }
 }
 
+// Fonction pour récupérer les détails d’un film à partir de son ID
 async function fetchMovieDetails(movieId) {
     const url = `https://api.themoviedb.org/3/movie/${movieId}`;
+
     try {
+        // Effectuer une requête pour obtenir les détails du film
         const response = await fetch(url, {
             headers: {
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5YWYyYzdmOGFhNTE1MmE2MzUzZGQ4NmU3YWQxOTUyZiIsIm5iZiI6MTczOTY1Mzk2My42MzEsInN1YiI6IjY3YjEwMzRiYmExNDcxMmY3NzM2MzVlYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dVdxqA5PntSr-vVj9piexqli8451flDG54ouvI1-7vc'
+                'Authorization': `Bearer ${APIkey}`
             }
         });
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const movieDetails = await response.json();
 
+        // Vérifier si la requête a réussi
+        if (!response.ok) throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
+
+        // Convertir la réponse en JSON
+        const movieDetails = await response.json();
+        
+        // console.log(movieDetails.backdrop_path);
+
+        // Formater les données pour correspondre à la structure souhaitée
         const movieFormatted = {
-            title: movieDetails.title,
-            year: movieDetails.release_date ? movieDetails.release_date.split('-')[0] : "Unknown",
-            rating: movieDetails.vote_average.toFixed(1),
-            duration: movieDetails.runtime || "Unknown",
-            genre: movieDetails.genres.map(genre => genre.name)
+            img: movieDetails.backdrop_path, //Image du film
+            title: movieDetails.title, // Titre du film
+            year: movieDetails.release_date ? movieDetails.release_date.split('-')[0] : "Inconnu", // Année de sortie
+            rating: movieDetails.vote_average.toFixed(1), // Note moyenne
+            duration: movieDetails.runtime || "Inconnu", // Durée du film (en minutes)
+            genre: movieDetails.genres.map(genre => genre.name) // Liste des genres
         };
+
+        // Ajouter le film formaté au tableau
         movies.push(movieFormatted);
 
         return movieFormatted;
     } catch (error) {
-        console.error("Could not fetch movie details: ", error);
+        console.error("Impossible de récupérer les détails du film :", error);
     }
 }
 
-// 页面加载时获取电影数据
 document.addEventListener("DOMContentLoaded", async () => {
-    await fetchMovies();
+    await fetchMovies(); //fonction fetchMovies pour récupérer les films
     console.log(movies);
     populateFilters();
     displayMovies(movies);
@@ -97,7 +120,7 @@ function displayMovies(filteredMovies) {
         card.classList.add("movie-card");
 
         card.innerHTML = `
-            <img src="https://place-hold.it/220x300" alt="${movie.title}">
+            <img src="https://image.tmdb.org/t/p/w500/${movie.img}" alt="${movie.title}">
             <h2>${movie.title} (${movie.year})</h2>
             <p class="rating">Note: ${movie.rating}</p>
             <p class="duration">Durée: ${movie.duration} min</p>
@@ -136,35 +159,38 @@ function applyFilters() {
 }
 
 function recommendMovie(selectedTitle) {
-  const movieContainer = document.getElementById("movieContainer");
-  movieContainer.innerHTML = ""; // Reset movie container
-
-  const selectedMovie = movies.find(movie => movie.title === selectedTitle);
-  if (!selectedMovie) {
-      alert('Film sélectionné non trouvé.');
-      return;
-  }
-
-  // 提取所选电影的类型
-  const selectedGenres = selectedMovie.genre;
-
-  // 计算每部电影与所选电影共享类型的数量
-  const recommendations = movies.filter(movie => movie.title !== selectedTitle)
-      .map(movie => {
-          return {
-              ...movie,
-              sharedGenresCount: movie.genre.reduce((count, genre) => {
-                  if (selectedGenres.includes(genre)) count++;
-                  return count;
-              }, 0)
-          };
-      })
-      .sort((a, b) => b.sharedGenresCount - a.sharedGenresCount) // 按共享类型数量降序排序
-      .slice(0, 3); // 选择前三部电影
-
-  if (recommendations.length > 0) {
-    displayMovies(recommendations);
-  } else {
-      alert('Aucune recommandation disponible.');
-  }
+    const movieContainer = document.getElementById("movieContainer");
+    movieContainer.innerHTML = ""; // Réinitialise le conteneur de films
+  
+    // Trouver le film sélectionné par son titre
+    const selectedMovie = movies.find(movie => movie.title === selectedTitle);
+    if (!selectedMovie) {
+        alert('Film sélectionné non trouvé.');
+        return;
+    }
+  
+    // Extraire les genres du film sélectionné
+    const selectedGenres = selectedMovie.genre;
+  
+    // Calculer le nombre de genres partagés avec chaque film
+    const recommendations = movies.filter(movie => movie.title !== selectedTitle)
+        .map(movie => {
+            return {
+                ...movie,
+                sharedGenresCount: movie.genre.reduce((count, genre) => {
+                    if (selectedGenres.includes(genre)) count++;
+                    return count;
+                }, 0)
+            };
+        })
+        .sort((a, b) => b.sharedGenresCount - a.sharedGenresCount) // Trier par le nombre de genres partagés, en ordre décroissant
+        .slice(0, 3); // Sélectionner les trois films les plus recommandés
+  
+    // Afficher les films recommandés s'il y en a, sinon afficher une alerte
+    if (recommendations.length > 0) {
+      displayMovies(recommendations);
+    } else {
+        alert('Aucune recommandation disponible.');
+    }
 }
+  
