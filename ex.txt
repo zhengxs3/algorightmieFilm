@@ -1,0 +1,18 @@
+Création d'un algorithme de tri et de recommandation de films
+
+Objectif :
+    Nous avons une petite application qui prend des films d'une liste incluse dans un tableau. Nous voulons mettre un algorithme de recommandation de films prennant différent critères en compte.
+
+Créer un algorithme de recommandation qui:
+    Permet aux utilisateurs de sélectionner un film.
+    Propose 3 films similaires en fonction des critères suivants:
+        - Le plus de genres en commun
+        - La note pas différent de plus que ~ 0.5
+        - Une durée pas différente de plus de 20% de la durée total
+
+Objectif bonus :
+    Faire pareil mais en récupérant des films via une API
+
+RENDU:
+    Votre application de recommandation de films + les exercices sur les algos de tris en fichier ZIP avec votre nom + prenom. Sur teams en privé, ou bien discord en DM, ou bien :
+    christophe.crognier@gmail.com

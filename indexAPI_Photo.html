@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FilmsAPI - Tri et Filtrage</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Catalogue de Films</h1>
+    
+    <div class="filters">
+        <select id="genreFilter">
+            <option value="">Tous les genres</option>
+        </select>
+        <select id="ratingFilter">
+            <option value="">Toutes les notes</option>
+        </select>
+        <select id="sortOption">
+            <option value="">Trier par</option>
+            <option value="rating">Note</option>
+            <option value="duration">Durée</option>
+        </select>
+        <button onclick="applyFilters()">Filtrer</button>
+		<button id="resetFilters">Réinitialiser les filtres</button>
+    </div>
+
+    <div id="movieContainer" class="movies"></div>
+
+    <script src="scriptAPI.js"></script>
+</body>
+</html>
