@@ -50,6 +50,7 @@ async function fetchMovieDetails(movieId) {
 // 页面加载时获取电影数据
 document.addEventListener("DOMContentLoaded", async () => {
     await fetchMovies();
+    console.log(movies);
     populateFilters();
     displayMovies(movies);
 
