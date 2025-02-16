@@ -1,6 +1,6 @@
 // Tableau pour stocker les films
 const movies = [];
-const APIkey = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5YWYyYzdmOGFhNTE1MmE2MzUzZGQ4NmU3YWQxOTUyZiIsIm5iZiI6MTczOTY1Mzk2My42MzEsInN1YiI6IjY3YjEwMzRiYmExNDcxMmY3NzM2MzVlYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.dVdxqA5PntSr-vVj9piexqli8451flDG54ouvI1-7vc";
+const APIkey = "your_api_key";
 
 // Fonction asynchrone pour récupérer une liste de films
 async function fetchMovies() {
